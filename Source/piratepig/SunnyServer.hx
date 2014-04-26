@@ -1,6 +1,6 @@
 package piratepig;
 
-import neko.Lib;
+import cpp.Lib;
 import cpp.net.ThreadServer;
 import sys.net.UdpSocket;
 import sys.net.Host;

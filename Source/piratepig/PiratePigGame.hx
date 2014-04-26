@@ -1,57 +1,52 @@
 package piratepig;
 
-
+import flash.Lib;
 import flash.display.Bitmap;
 import flash.display.Sprite;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.KeyboardEvent;
 import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.media.Sound;
+import flash.net.Socket;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import flash.Lib;
-import flash.net.Socket;
+import flash.ui.Keyboard;
 import motion.Actuate;
 import motion.easing.Quad;
 import openfl.Assets;
 
 
 class PiratePigGame extends Sprite {
-	
-	
-	private static var NUM_COLUMNS = 8;
-	private static var NUM_ROWS = 8;
-	
+	public var currentScale:Float;
+
 	private static var tileImages = [ "images/game_bear.png", "images/game_bunny_02.png", "images/game_carrot.png", "images/game_lemon.png", "images/game_panda.png", "images/game_piratePig.png" ];
 	
-	private var Background:Sprite;
-	private var IntroSound:Sound;
-	private var Logo:Bitmap;
-	private var Score:TextField;
-	private var Sound3:Sound;
-	private var Sound4:Sound;
-	private var Sound5:Sound;
-	private var TileContainer:Sprite;
+	private var previousTime:Float = 0.0;
+	private var player:Player;
 	
-	public var currentScale:Float;
-	public var currentScore:Int;
-	
-	private var cacheMouse:Point;
-	private var needToCheckMatches:Bool;
-	private var selectedTile:Tile;
-	private var tiles:Array <Array <Tile>>;
-	private var usedTiles:Array <Tile>;
-	
-	
-	public function new () {
+	public function new (stage:Stage) {
 		
 		super ();
 		
-		
+		player = new Player();
+		addChild(player);
 
+		stage.addEventListener (KeyboardEvent.KEY_DOWN, player.onKeyDown);
+		stage.addEventListener (KeyboardEvent.KEY_UP, player.onKeyUp);
+		stage.addEventListener (Event.ENTER_FRAME, onEnterFrame);
+	}
+
+	private function onEnterFrame(event:Event) {
+		var currentTime:Float = Lib.getTimer ();
+        var deltaTime = currentTime - previousTime;
+        previousTime = currentTime;
+
+		player.update(deltaTime * 0.001);
 	}
 
 	/*
