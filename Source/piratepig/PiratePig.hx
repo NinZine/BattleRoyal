@@ -22,7 +22,7 @@ class PiratePig extends Sprite {
 	public function new () {
 		
 		super ();
-		
+
 		initialize ();
 		construct ();
 		
@@ -57,7 +57,7 @@ class PiratePig extends Sprite {
 		Background.width = newWidth;
 		Background.height = newHeight;
 		
-		Game.resize (newWidth, newHeight);
+		//Game.resize (newWidth, newHeight);
 		
 		Footer.scaleX = Game.currentScale;
 		Footer.scaleY = Game.currentScale;

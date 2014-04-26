@@ -13,6 +13,7 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import flash.Lib;
+import flash.net.Socket;
 import motion.Actuate;
 import motion.easing.Quad;
 import openfl.Assets;
@@ -45,6 +46,15 @@ class PiratePigGame extends Sprite {
 	private var usedTiles:Array <Tile>;
 	
 	
+	public function new () {
+		
+		super ();
+		
+		
+
+	}
+
+	/*
 	public function new () {
 		
 		super ();
@@ -593,6 +603,8 @@ class PiratePigGame extends Sprite {
 		}
 		
 	}
+
+	*/
 	
 	
 }
