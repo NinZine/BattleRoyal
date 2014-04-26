@@ -1,5 +1,6 @@
 package piratepig;
 
+import neko.Lib;
 import cpp.net.ThreadServer;
 import sys.net.UdpSocket;
 import sys.net.Host;
@@ -76,16 +77,39 @@ class SunnyServer extends  ThreadServer<Client, Message>{
 	override public dynamic function onError(e:Dynamic, stack) {
 	}
 
+	// create a client
 	override public dynamic function clientConnected(s:sys.net.Socket) {
+		var num = Std.random(100);
+		Lib.println("client " + num + " is " + s.peer());
+		return { id: num };
 	}
 
 	override public dynamic function clientDisconnected(c:Client) {
+		Lib.println("client " + Std.string(c.id) + " disconnected");
 	}
 
-	override public dynamic function readClientMessage(c:Client, buf:haxe.io.Bytes, pos:Int, len:Int) {
+	override public dynamic function readClientMessage(c:Client, buf:haxe.io.Bytes, pos:Int, len:Int) : Message {
+		// find out if there's a full message, and if so, how long it is.
+		var complete = false;
+		var cpos = pos;
+		while (cpos < (pos+len) && !complete)
+		{
+			// check for a period/full stop (i.e.:  "." ) to signify a complete message
+			complete = (buf.get(cpos) == 46);
+			cpos++;
+		}
+
+		// no full message
+		if( !complete ) return null;
+
+		// got a full message, return it
+		var msg:String = buf.readString(pos, cpos-pos);
+		return {msg: {str: msg}, bytes: cpos-pos};
 	}
 
+	// send message to client
 	override public dynamic function clientMessage(c:Client, msg:Message) {
+		Lib.println(c.id + " sent: " + msg.str);
 	}
 
 	override public dynamic function update() {
