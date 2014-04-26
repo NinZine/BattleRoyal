@@ -47,7 +47,7 @@ class PiratePig extends Sprite {
 		
 		Background = new Bitmap (Assets.getBitmapData ("images/background_tile.png"));
 		Footer = new Bitmap (Assets.getBitmapData ("images/center_bottom.png"));
-		Game = new PiratePigGame ();
+		Game = new PiratePigGame (stage);
 		
 	}
 	
