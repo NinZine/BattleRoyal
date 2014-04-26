@@ -1,5 +1,8 @@
 package piratepig;
 
+import neko.Lib;
+import sys.net.Host;
+import sys.net.Socket;
 import sys.net.UdpSocket;
 
 class SunnyClient {
@@ -7,7 +10,9 @@ class SunnyClient {
 	public function new() {
 	}
 
-	public function run() {
+//	public function run()
+	public static function main()
+	{
 		Lib.println("opening connection");
 		var sock = new Socket();
 		sock.connect(new Host("localhost"), 1234);
