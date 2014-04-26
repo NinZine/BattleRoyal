@@ -31,7 +31,7 @@ class SunnyServer extends  ThreadServer<Client, Message>{
 	public override function runThread(t) {
 	}
 
-	public override function readClientData(c:ClientInfos<null>) {
+	public override function readClientData(c:ClientInfos<Client>) {
 	}
 
 	public override function loopThread(t:ThreadInfos) {
@@ -76,15 +76,16 @@ class SunnyServer extends  ThreadServer<Client, Message>{
 	override public dynamic function onError(e:Dynamic, stack) {
 	}
 
-	override public dynamic function clientConnected(s:sys.net.Socket)
-
-	override public dynamic function clientDisconnected(c:null) {
+	override public dynamic function clientConnected(s:sys.net.Socket) {
 	}
 
-	override public dynamic function readClientMessage(c:null, buf:haxe.io.Bytes, pos:Int, len:Int):{
+	override public dynamic function clientDisconnected(c:Client) {
 	}
 
-	override public dynamic function clientMessage(c:null, msg:null) {
+	override public dynamic function readClientMessage(c:Client, buf:haxe.io.Bytes, pos:Int, len:Int) {
+	}
+
+	override public dynamic function clientMessage(c:Client, msg:Message) {
 	}
 
 	override public dynamic function update() {
