@@ -22,7 +22,7 @@ import openfl.Assets;
 
 
 class PiratePigGame extends Sprite {
-	public var currentScale:Float;
+	public var currentScale(default, default):Float;
 
 	private static var tileImages = [ "images/game_bear.png", "images/game_bunny_02.png", "images/game_carrot.png", "images/game_lemon.png", "images/game_panda.png", "images/game_piratePig.png" ];
 	
@@ -34,10 +34,11 @@ class PiratePigGame extends Sprite {
 		super ();
 		
 		player = new Player();
-		addChild(player);
+		stage.addChild(player);
 
 		stage.addEventListener (KeyboardEvent.KEY_DOWN, player.onKeyDown);
 		stage.addEventListener (KeyboardEvent.KEY_UP, player.onKeyUp);
+		stage.addEventListener (MouseEvent.MOUSE_MOVE, player.onMouseMove);
 		stage.addEventListener (Event.ENTER_FRAME, onEnterFrame);
 	}
 
@@ -47,6 +48,45 @@ class PiratePigGame extends Sprite {
         previousTime = currentTime;
 
 		player.update(deltaTime * 0.001);
+	}
+
+	public function resize (newWidth:Int, newHeight:Int):Void {
+		
+		var maxWidth = newWidth * 0.90;
+		var maxHeight = newHeight * 0.86;
+		
+		currentScale = 1;
+		scaleX = 1;
+		scaleY = 1;
+		
+		
+		var currentWidth = width;
+		var currentHeight = height;
+		if (currentWidth > maxWidth || currentHeight > maxHeight) {
+			
+			var maxScaleX = maxWidth / currentWidth;
+			var maxScaleY = maxHeight / currentHeight;
+			
+			if (maxScaleX < maxScaleY) {
+				
+				currentScale = maxScaleX;
+				
+			} else {
+				
+				currentScale = maxScaleY;
+				
+			}
+			
+			scaleX = currentScale;
+			scaleY = currentScale;
+			
+		}
+		
+		x = newWidth / 2 - (currentWidth * currentScale) / 2;
+		
+
+		player.scaleX = currentScale;
+		player.scaleY = currentScale;
 	}
 
 	/*

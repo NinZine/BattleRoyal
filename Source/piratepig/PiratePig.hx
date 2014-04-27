@@ -9,6 +9,7 @@ import flash.events.KeyboardEvent;
 import flash.system.Capabilities;
 import flash.Lib;
 import openfl.Assets;
+import openfl.display.FPS;
 
 
 class PiratePig extends Sprite {
@@ -36,6 +37,7 @@ class PiratePig extends Sprite {
 		
 		Footer.smoothing = true;
 		
+		addChild(new FPS());
 		addChild (Background);
 		addChild (Footer);
 		addChild (Game);
@@ -57,7 +59,7 @@ class PiratePig extends Sprite {
 		Background.width = newWidth;
 		Background.height = newHeight;
 		
-		//Game.resize (newWidth, newHeight);
+		Game.resize (newWidth, newHeight);
 		
 		Footer.scaleX = Game.currentScale;
 		Footer.scaleY = Game.currentScale;

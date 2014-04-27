@@ -5,6 +5,14 @@ import sys.net.Host;
 import sys.net.Socket;
 import sys.net.UdpSocket;
 
+class Test {
+	public var x(default,default):Int;
+
+	public function new() {
+		x = 10;
+	}
+}
+
 class SunnyClient {
 
 	public function new() {
@@ -25,5 +33,13 @@ class SunnyClient {
 
 		sock.close();
 		Lib.println("client done");
+
+
+		var test = new Test();
+		test.x = 20;
+		var y = test.x;
+		y = 40;
+
+		trace("test.x: " + test.x + "y: " + y);
 	}
 }
