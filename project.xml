@@ -11,6 +11,8 @@
 	
 	<haxelib name="openfl" />
 	<haxelib name="actuate" />
+	<haxelib name="swf" />
+	<haxelib name="spritesheet" />
 	
 	<ios binaries="armv7" />
 	
@@ -34,6 +36,8 @@
 		<sound path="5.wav" id="sound5" />
 		<music path="theme.ogg" id="soundTheme" />
 	</assets>
+
+	<library path="Assets/swf/characters.swf" rename="characters"/>
 	
 	<section if="release-sign">
 		<certificate path="path/to/android.keystore" if="android" />

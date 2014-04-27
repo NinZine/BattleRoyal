@@ -15,6 +15,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
+import flash.display.MovieClip;
 import haxe.Unserializer;
 
 
@@ -22,6 +23,8 @@ class Player extends Sprite {
 	static public var RADIANS_TO_DEGREES:Float = 180 / Math.PI;
 	static public var DEGREES_TO_RADIANS:Float = Math.PI / 180;
 	private static var SPEED:Int = 40;
+	private var frameRate:Float = 0.024;
+	private var lastFrameUpdate:Float = 0;
 
 	private var movingUp:Bool = false;
 	private var movingDown:Bool = false;
@@ -30,6 +33,8 @@ class Player extends Sprite {
 	private var cursorPosition:Point;
 	private var currentAngle:Float = 0;
 	@isVar private var direction(default, default):Vector3D = new Vector3D(0, 1);
+	private var teddy:MovieClip;
+	private var currentAnimation:String = "front";
 	
 	public function new () {
 		
@@ -37,7 +42,17 @@ class Player extends Sprite {
 		
 		var image = new Bitmap (Assets.getBitmapData ("images/game_bear.png"));
 		image.smoothing = true;
-		addChild (image);
+
+
+		Assets.loadLibrary ("characters", function (_) {
+			
+			//teddy = Assets.getMovieClip ("characters:teddy");
+			teddy = Assets.getMovieClip ("characters:teddy");
+			addChild (teddy);
+		});
+
+
+		//addChild (image);
 		// Center the image
 		image.x -= image.width * 0.5;
 		image.y -= image.height * 0.5;
@@ -49,6 +64,10 @@ class Player extends Sprite {
 		//graphics.drawRect (-5, -5, 66, 66);
 		this.x = 400;
 		this.y = 400;
+		// XXX: Framerate is to fast, so animation become fast too
+		//teddy.addEventListener(Event.ENTER_FRAME, onAnimateTeddy);
+		//teddy.gotoAndPlay("front");
+		teddy.gotoAndStop(28);
 	}
 	
 	
@@ -83,13 +102,50 @@ class Player extends Sprite {
 			case Keyboard.UP: movingUp = false;
 		}
 	}
+
+	private function onAnimateTeddy(dt:Float) {
+		lastFrameUpdate += dt;
+		if (lastFrameUpdate < frameRate) {
+			return;
+		}
+
+		var right = cast(teddy.getChildByName("right"), flash.display.MovieClip);
+		if (movingRight) {
+			teddy.scaleX = 1;
+			if (teddy.currentFrame == 40) {
+				teddy.gotoAndStop(28);
+				right.gotoAndStop(0);
+			} else {
+				teddy.gotoAndStop(teddy.currentFrame + 1);
+				right.gotoAndStop(right.currentFrame + 1);
+			}
+		} else if (movingLeft) {
+			teddy.scaleX = -1;
+			if (teddy.currentFrame == 40) {
+				teddy.gotoAndStop(28);
+				right.gotoAndStop(0);
+			} else {
+				teddy.gotoAndStop(teddy.currentFrame + 1);
+				right.gotoAndStop(right.currentFrame + 1);
+			}
+		} else {
+			teddy.gotoAndStop(28);
+			right.gotoAndStop(0);
+			
+		}
+		lastFrameUpdate = 0;
+	}
 	
 	
 	public function update (dt:Float):Void {
+		/*
 		if (movingUp) {
 			this.x -= direction.x * SPEED * dt;
 			this.y -= direction.y * SPEED * dt;
 		}
+		*/
+
+		onAnimateTeddy(dt);
 	}
 
 	
