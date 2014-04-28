@@ -86,10 +86,16 @@ class Player extends Sprite {
 		switch (event.keyCode) {
 			case Keyboard.DOWN: movingDown = true;
 			case Keyboard.LEFT: {
+				if (movingRight) {
+					movingRight = false;
+				}
 				movingLeft = true;
 				teddy.scaleX = -1;
 			}
 			case Keyboard.RIGHT: {
+				if (movingLeft) {
+					movingLeft = false;
+				}
 				movingRight = true;
 				teddy.scaleX = 1;
 			}
@@ -118,7 +124,6 @@ class Player extends Sprite {
 
 		var right = cast(teddy.getChildByName("right"), flash.display.MovieClip);
 		if (movingRight) {
-			teddy.scaleX = 1;
 			if (right.currentFrame == right.totalFrames) {
 				right.gotoAndStop(0);
 			} else {
