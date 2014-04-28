@@ -1,4 +1,4 @@
-PiratePig
-=========
+Battle Royal
+============
 
-[sample] Puzzle game similar to Bejeweled, fully cross-platform for NME
+A topdown shooter with teddy bears

@@ -1,5 +1,11 @@
 package piratepig;
 
+import haxe.ui.toolkit.core.Macros;
+import haxe.ui.toolkit.core.Toolkit;
+import haxe.ui.toolkit.core.Root;
+import haxe.ui.toolkit.controls.Button;
+import haxe.ui.toolkit.controls.HSlider;
+import haxe.ui.toolkit.events.UIEvent;
 import flash.Lib;
 import flash.display.Bitmap;
 import flash.display.Sprite;
@@ -40,6 +46,23 @@ class PiratePigGame extends Sprite {
 		stage.addEventListener (KeyboardEvent.KEY_UP, player.onKeyUp);
 		//stage.addEventListener (MouseEvent.MOUSE_MOVE, player.onMouseMove);
 		stage.addEventListener (Event.ENTER_FRAME, onEnterFrame);
+
+#if (debug)
+		Macros.addStyleSheet("styles/gradient/gradient.css");
+		Toolkit.init();
+		Toolkit.openFullscreen(function(root:Root) {
+			var slider:HSlider = new HSlider();
+			slider.width = 100;
+			slider.min = 0;
+			slider.max = 100;
+			slider.incrementSize = 0.5;
+			slider.addEventListener(UIEvent.CHANGE, function (e) {
+				player.speed = cast(slider.pos, Int);
+			});
+			slider.pos = slider.max * 0.5;
+			root.addChild(slider);
+		});
+#end
 	}
 
 	private function onEnterFrame(event:Event) {

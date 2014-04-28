@@ -13,6 +13,7 @@
 	<haxelib name="actuate" />
 	<haxelib name="swf" />
 	<haxelib name="spritesheet" />
+	<haxelib name="haxeui" />
 	
 	<ios binaries="armv7" />
 	

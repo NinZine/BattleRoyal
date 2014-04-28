@@ -22,14 +22,17 @@ import haxe.Unserializer;
 class Player extends Sprite {
 	static public var RADIANS_TO_DEGREES:Float = 180 / Math.PI;
 	static public var DEGREES_TO_RADIANS:Float = Math.PI / 180;
-	private static var SPEED:Int = 40;
 	private var frameRate:Float = 0.024;
 	private var lastFrameUpdate:Float = 0;
 
+	// Input
 	private var movingUp:Bool = false;
 	private var movingDown:Bool = false;
 	private var movingLeft:Bool = false;
 	private var movingRight:Bool = false;
+	private var shooting:Bool = false;
+
+	@isVar public var speed(default, default):Int = 40;
 	private var cursorPosition:Point;
 	private var currentAngle:Float = 0;
 	@isVar private var direction(default, default):Vector3D = new Vector3D(0, 1);
@@ -40,23 +43,12 @@ class Player extends Sprite {
 		
 		super ();
 		
-		var image = new Bitmap (Assets.getBitmapData ("images/game_bear.png"));
-		image.smoothing = true;
-
-
 		Assets.loadLibrary ("characters", function (_) {
-			
-			//teddy = Assets.getMovieClip ("characters:teddy");
-			teddy = Assets.getMovieClip ("characters:teddy");
+			teddy = Assets.getMovieClip ("characters:TeddyMC");
+			teddy.gotoAndStop(28);
 			addChild (teddy);
 		});
 
-
-		//addChild (image);
-		// Center the image
-		image.x -= image.width * 0.5;
-		image.y -= image.height * 0.5;
-		
 		mouseChildren = false;
 		buttonMode = true;
 		
@@ -64,16 +56,18 @@ class Player extends Sprite {
 		//graphics.drawRect (-5, -5, 66, 66);
 		this.x = 400;
 		this.y = 400;
+
 		// XXX: Framerate is to fast, so animation become fast too
 		//teddy.addEventListener(Event.ENTER_FRAME, onAnimateTeddy);
 		//teddy.gotoAndPlay("front");
-		teddy.gotoAndStop(28);
+
+		// XXX: It's null in Flash target :/
+		if (teddy != null) {
+			teddy.gotoAndStop(28);
+		}
 	}
 	
-	
-	
-	
-	// Event Handlers
+	/* Event Handlers ***********************************************************/
 	
 	public function onMouseMove(event:MouseEvent):Void {
 		direction.x = this.x - event.localX;
@@ -85,27 +79,31 @@ class Player extends Sprite {
 	
 	
 	public function onKeyDown (event:KeyboardEvent):Void {
+		// XXX: Cases don't fall through in haXe, therefore no break <3
 		switch (event.keyCode) {
 			case Keyboard.DOWN: movingDown = true;
 			case Keyboard.LEFT: movingLeft = true;
 			case Keyboard.RIGHT: movingRight = true;
 			case Keyboard.UP: movingUp = true;
+			case Keyboard.SPACE: shooting = true;
 		}
 	}
 	
 	
 	public function onKeyUp (event:KeyboardEvent):Void {
+		// XXX: Cases don't fall through in haXe, therefore no break <3
 		switch (event.keyCode) {
 			case Keyboard.DOWN: movingDown = false;
 			case Keyboard.LEFT: movingLeft = false;
 			case Keyboard.RIGHT: movingRight = false;
 			case Keyboard.UP: movingUp = false;
+			case Keyboard.SPACE: shooting = false;
 		}
 	}
 
 	private function onAnimateTeddy(dt:Float) {
 		lastFrameUpdate += dt;
-		if (lastFrameUpdate < frameRate) {
+		if (lastFrameUpdate < frameRate || teddy == null) {
 			return;
 		}
 
@@ -138,12 +136,11 @@ class Player extends Sprite {
 	
 	
 	public function update (dt:Float):Void {
-		/*
-		if (movingUp) {
-			this.x -= direction.x * SPEED * dt;
-			this.y -= direction.y * SPEED * dt;
+		if (movingLeft) {
+			this.x -= speed * dt;
+		} else if (movingRight) {
+			this.x += speed * dt;
 		}
-		*/
 
 		onAnimateTeddy(dt);
 	}

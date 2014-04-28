@@ -29,7 +29,6 @@ class PiratePig extends Sprite {
 		
 		resize (stage.stageWidth, stage.stageHeight);
 		stage.addEventListener (Event.RESIZE, stage_onResize);
-		
 	}
 	
 	
