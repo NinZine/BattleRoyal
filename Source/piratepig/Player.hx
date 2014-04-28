@@ -45,7 +45,10 @@ class Player extends Sprite {
 		
 		Assets.loadLibrary ("characters", function (_) {
 			teddy = Assets.getMovieClip ("characters:TeddyMC");
-			teddy.gotoAndStop(28);
+			teddy.gotoAndStop(0);
+			teddy.getChildByName("front").visible = false;
+			teddy.getChildByName("back").visible = false;
+			teddy.getChildByName("right").visible = true;
 			addChild (teddy);
 		});
 
@@ -63,7 +66,7 @@ class Player extends Sprite {
 
 		// XXX: It's null in Flash target :/
 		if (teddy != null) {
-			teddy.gotoAndStop(28);
+			teddy.gotoAndStop(0);
 		}
 	}
 	
@@ -82,8 +85,14 @@ class Player extends Sprite {
 		// XXX: Cases don't fall through in haXe, therefore no break <3
 		switch (event.keyCode) {
 			case Keyboard.DOWN: movingDown = true;
-			case Keyboard.LEFT: movingLeft = true;
-			case Keyboard.RIGHT: movingRight = true;
+			case Keyboard.LEFT: {
+				movingLeft = true;
+				teddy.scaleX = -1;
+			}
+			case Keyboard.RIGHT: {
+				movingRight = true;
+				teddy.scaleX = 1;
+			}
 			case Keyboard.UP: movingUp = true;
 			case Keyboard.SPACE: shooting = true;
 		}
@@ -110,26 +119,19 @@ class Player extends Sprite {
 		var right = cast(teddy.getChildByName("right"), flash.display.MovieClip);
 		if (movingRight) {
 			teddy.scaleX = 1;
-			if (teddy.currentFrame == 40) {
-				teddy.gotoAndStop(28);
+			if (right.currentFrame == right.totalFrames) {
 				right.gotoAndStop(0);
 			} else {
-				teddy.gotoAndStop(teddy.currentFrame + 1);
 				right.gotoAndStop(right.currentFrame + 1);
 			}
 		} else if (movingLeft) {
-			teddy.scaleX = -1;
-			if (teddy.currentFrame == 40) {
-				teddy.gotoAndStop(28);
+			if (right.currentFrame == right.totalFrames) {
 				right.gotoAndStop(0);
 			} else {
-				teddy.gotoAndStop(teddy.currentFrame + 1);
 				right.gotoAndStop(right.currentFrame + 1);
 			}
 		} else {
-			teddy.gotoAndStop(28);
 			right.gotoAndStop(0);
-			
 		}
 		lastFrameUpdate = 0;
 	}
