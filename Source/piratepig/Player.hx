@@ -32,12 +32,17 @@ class Player extends Sprite {
 	private var movingRight:Bool = false;
 	private var shooting:Bool = false;
 
-	@isVar public var speed(default, default):Int = 40;
+	// Pixels per second
+	@isVar public var speed(default, default):Int = 100;
 	private var cursorPosition:Point;
 	private var currentAngle:Float = 0;
 	@isVar private var direction(default, default):Vector3D = new Vector3D(0, 1);
+
 	private var teddy:MovieClip;
-	private var currentAnimation:String = "front";
+	static private var FRONT = "front";
+	static private var BACK = "back";
+	static private var RIGHT = "right";
+	private var currentAnimationName:String = RIGHT;
 	
 	public function new () {
 		
@@ -46,9 +51,13 @@ class Player extends Sprite {
 		Assets.loadLibrary ("characters", function (_) {
 			teddy = Assets.getMovieClip ("characters:TeddyMC");
 			teddy.gotoAndStop(0);
-			teddy.getChildByName("front").visible = false;
-			teddy.getChildByName("back").visible = false;
-			teddy.getChildByName("right").visible = true;
+			teddy.getChildByName(FRONT).visible = false;
+			teddy.getChildByName(BACK).visible = false;
+			teddy.getChildByName(RIGHT).visible = true;
+			cast(teddy.getChildByName(currentAnimationName), MovieClip).gotoAndStop(0);
+
+			// Feet at bottom
+			teddy.y -= teddy.height * 0.5;
 			addChild (teddy);
 		});
 
@@ -57,8 +66,8 @@ class Player extends Sprite {
 		
 		//graphics.beginFill (0x000000, 0);
 		//graphics.drawRect (-5, -5, 66, 66);
-		this.x = 400;
-		this.y = 400;
+		this.x = 200;
+		this.y = 200;
 
 		// XXX: Framerate is to fast, so animation become fast too
 		//teddy.addEventListener(Event.ENTER_FRAME, onAnimateTeddy);
@@ -84,23 +93,52 @@ class Player extends Sprite {
 	public function onKeyDown (event:KeyboardEvent):Void {
 		// XXX: Cases don't fall through in haXe, therefore no break <3
 		switch (event.keyCode) {
-			case Keyboard.DOWN: movingDown = true;
+			case Keyboard.DOWN: {
+				movingDown = true;
+				movingRight = false;
+				movingUp = false;
+				movingLeft = false;
+
+				teddy.scaleX = 1;
+				teddy.getChildByName(currentAnimationName).visible = false;
+				teddy.getChildByName(FRONT).visible = true;
+				currentAnimationName = FRONT;
+			}
 			case Keyboard.LEFT: {
-				if (movingRight) {
-					movingRight = false;
-				}
+				movingRight = false;
+				movingUp = false;
+				movingDown = false;
 				movingLeft = true;
+
 				teddy.scaleX = -1;
+				teddy.getChildByName(currentAnimationName).visible = false;
+				teddy.getChildByName(RIGHT).visible = true;
+				currentAnimationName = RIGHT;
 			}
 			case Keyboard.RIGHT: {
-				if (movingLeft) {
-					movingLeft = false;
-				}
 				movingRight = true;
+				movingLeft = false;
+				movingUp = false;
+				movingDown = false;
+
 				teddy.scaleX = 1;
+				teddy.getChildByName(currentAnimationName).visible = false;
+				teddy.getChildByName(RIGHT).visible = true;
+				currentAnimationName = RIGHT;
 			}
-			case Keyboard.UP: movingUp = true;
-			case Keyboard.SPACE: shooting = true;
+			case Keyboard.UP: {
+				movingUp = true;
+				movingLeft = false;
+				movingRight = false;
+				movingDown = false;
+
+				teddy.getChildByName(currentAnimationName).visible = false;
+				teddy.getChildByName(BACK).visible = true;
+				currentAnimationName = BACK;
+			}
+			case Keyboard.SPACE: {
+				shooting = true;
+			}
 		}
 	}
 	
@@ -122,21 +160,15 @@ class Player extends Sprite {
 			return;
 		}
 
-		var right = cast(teddy.getChildByName("right"), flash.display.MovieClip);
-		if (movingRight) {
-			if (right.currentFrame == right.totalFrames) {
-				right.gotoAndStop(0);
+		var currentAnimation = cast(teddy.getChildByName(currentAnimationName), flash.display.MovieClip);
+		if (movingRight || movingLeft || movingUp || movingDown) {
+			if (currentAnimation.currentFrame == currentAnimation.totalFrames) {
+				currentAnimation.gotoAndStop(0);
 			} else {
-				right.gotoAndStop(right.currentFrame + 1);
-			}
-		} else if (movingLeft) {
-			if (right.currentFrame == right.totalFrames) {
-				right.gotoAndStop(0);
-			} else {
-				right.gotoAndStop(right.currentFrame + 1);
+				currentAnimation.gotoAndStop(currentAnimation.currentFrame + 1);
 			}
 		} else {
-			right.gotoAndStop(0);
+			currentAnimation.gotoAndStop(0);
 		}
 		lastFrameUpdate = 0;
 	}
@@ -147,6 +179,10 @@ class Player extends Sprite {
 			this.x -= speed * dt;
 		} else if (movingRight) {
 			this.x += speed * dt;
+		} else if (movingUp) {
+			this.y -= speed * dt;
+		} else if (movingDown) {
+			this.y += speed * dt;
 		}
 
 		onAnimateTeddy(dt);

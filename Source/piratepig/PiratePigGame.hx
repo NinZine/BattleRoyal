@@ -8,6 +8,8 @@ import haxe.ui.toolkit.controls.HSlider;
 import haxe.ui.toolkit.events.UIEvent;
 import flash.Lib;
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
@@ -34,35 +36,58 @@ class PiratePigGame extends Sprite {
 	
 	private var previousTime:Float = 0.0;
 	private var player:Player;
+	private var gameObjects:Array<DisplayObject> = new Array<DisplayObject>();
 	
 	public function new (stage:Stage) {
 		
 		super ();
 		
 		player = new Player();
-		stage.addChild(player);
 
-		stage.addEventListener (KeyboardEvent.KEY_DOWN, player.onKeyDown);
-		stage.addEventListener (KeyboardEvent.KEY_UP, player.onKeyUp);
-		//stage.addEventListener (MouseEvent.MOUSE_MOVE, player.onMouseMove);
-		stage.addEventListener (Event.ENTER_FRAME, onEnterFrame);
+		// Add a couple of bushes
+		Assets.loadLibrary ("characters", function (_) {
+			for (i in 0...10) {
+				var bush = Assets.getMovieClip("characters:BushMC");
+				bush.x = Math.random() * stage.stageWidth;
+				bush.y = Math.random() * stage.stageHeight;
+
+				gameObjects.push(bush);
+			}
+			gameObjects.push(player);
+			gameObjects.sort(sortDisplayObjectsByY);
+			for (i in 0...gameObjects.length) {
+				addChild(gameObjects[i]);
+			}
+
+			stage.addEventListener (KeyboardEvent.KEY_DOWN, player.onKeyDown);
+			stage.addEventListener (KeyboardEvent.KEY_UP, player.onKeyUp);
+			//stage.addEventListener (MouseEvent.MOUSE_MOVE, player.onMouseMove);
+			stage.addEventListener (Event.ENTER_FRAME, onEnterFrame);
+
 
 #if (debug)
-		Macros.addStyleSheet("styles/gradient/gradient.css");
-		Toolkit.init();
-		Toolkit.openFullscreen(function(root:Root) {
-			var slider:HSlider = new HSlider();
-			slider.width = 100;
-			slider.min = 0;
-			slider.max = 100;
-			slider.incrementSize = 0.5;
-			slider.addEventListener(UIEvent.CHANGE, function (e) {
-				player.speed = cast(slider.pos, Int);
+			Macros.addStyleSheet("styles/gradient/gradient.css");
+			Toolkit.init();
+			Toolkit.openFullscreen(function(root:Root) {
+				var slider:HSlider = new HSlider();
+				slider.width = 100;
+				slider.min = 0;
+				slider.max = 300;
+				slider.incrementSize = 0.5;
+				slider.addEventListener(UIEvent.CHANGE, function (e) {
+					player.speed = cast(slider.pos, Int);
+				});
+				slider.pos = slider.max * 0.5;
+				root.addChild(slider);
 			});
-			slider.pos = slider.max * 0.5;
-			root.addChild(slider);
-		});
 #end
+		});
+	}
+
+	private function sortDisplayObjectsByY(a:DisplayObject, b:DisplayObject):Int {
+		if (a.y < b.y) return -1;
+		if (a.y > b.y) return 1;
+		return 0;
 	}
 
 	private function onEnterFrame(event:Event) {
@@ -71,6 +96,12 @@ class PiratePigGame extends Sprite {
         previousTime = currentTime;
 
 		player.update(deltaTime * 0.001);
+
+		// Sort game objects by Y position before render
+		gameObjects.sort(sortDisplayObjectsByY);
+		for (i in 0...gameObjects.length) {
+			setChildIndex(gameObjects[i], i);
+		}
 	}
 
 	public function resize (newWidth:Int, newHeight:Int):Void {

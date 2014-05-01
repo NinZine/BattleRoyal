@@ -24,21 +24,23 @@ class PiratePig extends Sprite {
 		
 		super ();
 
-		initialize ();
-		construct ();
+		Assets.loadLibrary("characters", function (_) {
+			initialize ();
+			construct ();
 		
-		resize (stage.stageWidth, stage.stageHeight);
-		stage.addEventListener (Event.RESIZE, stage_onResize);
+			resize (stage.stageWidth, stage.stageHeight);
+			stage.addEventListener (Event.RESIZE, stage_onResize);
+		});
 	}
 	
 	
 	private function construct ():Void {
 		
-		Footer.smoothing = true;
+		//Footer.smoothing = true;
 		
 		addChild(new FPS());
 		addChild (Background);
-		addChild (Footer);
+		//addChild (Footer);
 		addChild (Game);
 		
 	}
@@ -46,8 +48,9 @@ class PiratePig extends Sprite {
 	
 	private function initialize ():Void {
 		
-		Background = new Bitmap (Assets.getBitmapData ("images/background_tile.png"));
-		Footer = new Bitmap (Assets.getBitmapData ("images/center_bottom.png"));
+		Background = new Bitmap (Assets.getBitmapData ("characters:BackgroundBitmap"));
+		//Background = Assets.getMovieClip("characters:BackgroundVector");
+		//Footer = new Bitmap (Assets.getBitmapData ("images/center_bottom.png"));
 		Game = new PiratePigGame (stage);
 		
 	}
@@ -60,10 +63,12 @@ class PiratePig extends Sprite {
 		
 		Game.resize (newWidth, newHeight);
 		
+		/* TODO: Use footer for buttons
 		Footer.scaleX = Game.currentScale;
 		Footer.scaleY = Game.currentScale;
 		Footer.x = newWidth / 2 - Footer.width / 2;
 		Footer.y = newHeight - Footer.height;
+		*/
 		
 	}
 	
